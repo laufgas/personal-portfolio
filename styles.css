@@ -1623,6 +1623,26 @@ h2.section-title {
 }
 
 @media (max-width: 768px) {
+    .section-title-wrap {
+        text-align: center;
+    }
+    
+    .section-divider {
+        margin: 10px auto 0 auto;
+    }
+    
+    .arcade-intro {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .strength-card {
+        align-items: center;
+        text-align: center;
+    }
+
     .scroll-indicator {
         display: none;
     }
