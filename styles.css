@@ -1673,21 +1673,26 @@ h2.section-title {
     }
     
     /* Reels & Cabinet mobile scaling */
-    .reels-container {
-        gap: 12px;
+    .slot-machine-cabinet {
+        transform: scale(0.85);
+        transform-origin: top center;
+        margin-bottom: -75px;
     }
     
-    .reel-window {
-        width: 80px;
-        height: 110px;
+    .game-header-bar {
+        padding: 10px 12px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
     }
     
-    .reel-symbol {
-        font-size: 2.6rem;
+    .game-header-bar #exit-game-btn {
+        width: 100%;
     }
     
     .arcade-cabinet-wrapper {
         padding: 24px 16px;
+        overflow: hidden; /* prevent horizontal scrollbars from absolute elements */
     }
     
     .canvas-container {
@@ -1717,5 +1722,21 @@ h2.section-title {
         flex-direction: column;
         text-align: center;
         padding: 30px 20px;
+    }
+}
+
+@media (max-width: 400px) {
+    .slot-machine-cabinet {
+        transform: scale(0.72);
+        transform-origin: top center;
+        margin-bottom: -110px;
+    }
+    
+    .arch-marquee-neon {
+        font-size: 0.95rem;
+    }
+    
+    .neon-billboard-text {
+        font-size: 0.85rem;
     }
 }

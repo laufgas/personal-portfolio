@@ -359,14 +359,39 @@ document.addEventListener('DOMContentLoaded', () => {
         keys[e.code] = false;
     });
 
-    // Capture mouse coordinate inside canvas for paddle controllers
+    // Capture mouse/touch coordinates inside canvas for paddle controllers (with scaling)
     let mouseX = 300;
     let mouseY = 200;
-    canvas.addEventListener('mousemove', (e) => {
+
+    function updateMousePosition(clientX, clientY) {
         const rect = canvas.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
+        // Scale correctly based on canvas display size vs internal resolution (600x400)
+        mouseX = (clientX - rect.left) * (canvas.width / rect.width);
+        mouseY = (clientY - rect.top) * (canvas.height / rect.height);
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+        updateMousePosition(e.clientX, e.clientY);
     });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+            updateMousePosition(e.touches[0].clientX, e.touches[0].clientY);
+            // Prevent scrolling page while playing
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+            updateMousePosition(e.touches[0].clientX, e.touches[0].clientY);
+            // Allow tap-to-serve
+            if (currentGame && currentGame.handleCanvasClick) {
+                currentGame.handleCanvasClick(e);
+            }
+            e.preventDefault();
+        }
+    }, { passive: false });
 
 
     // ==========================================
@@ -590,6 +615,36 @@ document.addEventListener('DOMContentLoaded', () => {
             this.score = 0;
             this.gameInterval = null;
             this.waitingForInput = true;
+
+            // Touch swipe controls for mobile
+            this.touchStartX = 0;
+            this.touchStartY = 0;
+            this.touchStartHandler = (e) => {
+                if (e.touches && e.touches[0]) {
+                    this.touchStartX = e.touches[0].clientX;
+                    this.touchStartY = e.touches[0].clientY;
+                }
+            };
+            this.touchEndHandler = (e) => {
+                if (!e.changedTouches || e.changedTouches.length === 0) return;
+                const diffX = e.changedTouches[0].clientX - this.touchStartX;
+                const diffY = e.changedTouches[0].clientY - this.touchStartY;
+                
+                const threshold = 30; // min swipe distance in px
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (Math.abs(diffX) > threshold) {
+                        if (diffX > 0 && this.direction !== 'left') this.nextDirection = 'right';
+                        else if (diffX < 0 && this.direction !== 'right') this.nextDirection = 'left';
+                        this.waitingForInput = false; // Swipe starts the game!
+                    }
+                } else {
+                    if (Math.abs(diffY) > threshold) {
+                        if (diffY > 0 && this.direction !== 'up') this.nextDirection = 'down';
+                        else if (diffY < 0 && this.direction !== 'down') this.nextDirection = 'up';
+                        this.waitingForInput = false;
+                    }
+                }
+            };
         }
 
         start() {
@@ -598,6 +653,10 @@ document.addEventListener('DOMContentLoaded', () => {
             this.direction = 'right';
             this.nextDirection = 'right';
             this.waitingForInput = true;
+
+            // Register touch handlers
+            this.canvas.addEventListener('touchstart', this.touchStartHandler, { passive: true });
+            this.canvas.addEventListener('touchend', this.touchEndHandler, { passive: true });
             
             // Initial snake parts (middle of screen)
             this.snake = [
@@ -620,6 +679,9 @@ document.addEventListener('DOMContentLoaded', () => {
         stop() {
             this.running = false;
             clearInterval(this.gameInterval);
+            // Remove touch handlers
+            this.canvas.removeEventListener('touchstart', this.touchStartHandler);
+            this.canvas.removeEventListener('touchend', this.touchEndHandler);
         }
 
         spawnFood() {
@@ -802,19 +864,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         update() {
             // Player controls
-            if (keys['ArrowLeft'] || keys['KeyA']) {
-                this.pX -= this.pSpeed;
+            const isKeyboardMoving = keys['ArrowLeft'] || keys['KeyA'] || keys['ArrowRight'] || keys['KeyD'];
+            
+            if (isKeyboardMoving) {
+                if (keys['ArrowLeft'] || keys['KeyA']) {
+                    this.pX -= this.pSpeed;
+                }
+                if (keys['ArrowRight'] || keys['KeyD']) {
+                    this.pX += this.pSpeed;
+                }
+            } else {
+                // Smoothly center the player ship under touch/mouse position
+                this.pX = mouseX - this.pWidth / 2;
             }
-            if (keys['ArrowRight'] || keys['KeyD']) {
-                this.pX += this.pSpeed;
-            }
+
             // Clamp player
             if (this.pX < 10) this.pX = 10;
             if (this.pX + this.pWidth > this.canvas.width - 10) this.pX = this.canvas.width - 10 - this.pWidth;
 
             // Shoot bullets
-            if (keys['Space']) {
-                const now = Date.now();
+            const now = Date.now();
+            const isKeyboardShooting = keys['Space'];
+            
+            // Auto-shoot if using touch/mouse controls (keyboard is idle), or manually if spacebar pressed
+            if (isKeyboardShooting || !isKeyboardMoving) {
                 if (now - this.lastShot > this.shotCooldown) {
                     this.bullets.push({
                         x: this.pX + this.pWidth / 2 - this.bulletWidth / 2,
