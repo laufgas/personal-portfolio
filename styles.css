@@ -1631,6 +1631,16 @@ h2.section-title {
         text-align: center;
     }
     
+    .card-body pre {
+        white-space: pre-wrap !important;
+        word-break: break-all !important;
+    }
+    .hero-visual,
+    .hero-visual-wrapper,
+    .visual-card {
+        min-width: 0 !important;
+    }
+    
     .section-divider {
         margin: 10px auto 0 auto;
     }
@@ -1730,6 +1740,7 @@ h2.section-title {
     
     /* Reels & Cabinet mobile scaling */
     .slot-machine-cabinet {
+        width: 320px !important;
         transform: scale(0.85);
         transform-origin: top center;
         margin-bottom: -75px;
@@ -1783,6 +1794,7 @@ h2.section-title {
 
 @media (max-width: 400px) {
     .slot-machine-cabinet {
+        width: 320px !important;
         transform: scale(0.72);
         transform-origin: top center;
         margin-bottom: -110px;
