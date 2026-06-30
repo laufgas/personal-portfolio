@@ -468,11 +468,8 @@
                             Send Email <i class="fa-solid fa-paper-plane"></i>
                         </a>
                         <div class="social-grid">
-                            <a href="https://linkedin.com" target="_blank" class="social-icon-btn" aria-label="LinkedIn">
+                            <a href="https://www.linkedin.com/in/laufgas/" target="_blank" class="social-icon-btn" aria-label="LinkedIn">
                                 <i class="fa-brands fa-linkedin-in"></i>
-                            </a>
-                            <a href="https://github.com" target="_blank" class="social-icon-btn" aria-label="GitHub">
-                                <i class="fa-brands fa-github"></i>
                             </a>
                         </div>
                     </div>
@@ -490,32 +487,5 @@
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="arcade.js"></script>
-    
-    <!-- Temporary Layout Debugger -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const docWidth = document.documentElement.clientWidth || window.innerWidth;
-                const overflowing = [];
-                document.querySelectorAll('*').forEach(el => {
-                    // Skip script, style tags, and the banner itself
-                    if (['SCRIPT', 'STYLE', 'LINK', 'META', 'HEAD', 'HTML'].includes(el.tagName)) return;
-                    const rect = el.getBoundingClientRect();
-                    if (rect.width > docWidth + 1) {
-                        const classStr = el.className ? '.' + Array.from(el.classList).join('.') : '';
-                        const idStr = el.id ? '#' + el.id : '';
-                        overflowing.push(`${el.tagName}${idStr}${classStr} (${Math.round(rect.width)}px > ${docWidth}px)`);
-                    }
-                });
-                if (overflowing.length > 0) {
-                    const banner = document.createElement('div');
-                    banner.id = 'layout-debug-banner';
-                    banner.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:rgba(255,0,0,0.95);color:white;z-index:999999;font-size:11px;padding:10px;word-break:break-all;font-family:monospace;line-height:1.4;box-shadow:0 4px 10px rgba(0,0,0,0.5);max-height:50vh;overflow-y:auto;';
-                    banner.innerHTML = '<strong>⚠️ Overflowing elements on this viewport:</strong><br>' + overflowing.join('<br>');
-                    document.body.appendChild(banner);
-                }
-            }, 2000);
-        });
-    </script>
 </body>
 </html>
