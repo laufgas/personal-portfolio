@@ -1643,6 +1643,30 @@ h2.section-title {
         text-align: center;
     }
 
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .core-stats {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .stat-item {
+        align-items: center;
+        text-align: center;
+        min-width: 100px;
+    }
+
     .scroll-indicator {
         display: none;
     }
@@ -1681,9 +1705,17 @@ h2.section-title {
     
     .timeline-item {
         width: 100%;
+        left: 0 !important;
         padding-left: 50px !important;
         padding-right: 0 !important;
         align-self: flex-start !important;
+    }
+    
+    .role-badge {
+        position: static;
+        display: inline-block;
+        margin-bottom: 12px;
+        width: fit-content;
     }
     
     .left-item .timeline-dot,
